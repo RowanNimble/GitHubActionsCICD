@@ -1,0 +1,11 @@
+.local/
+.settings/
+.objects/
+.project/
+.tmh/
+bin/
+obj/
+output/
+*.nupkg
+.DS_Store
+Thumbs.db

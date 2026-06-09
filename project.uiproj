@@ -1,0 +1,6 @@
+{
+  "Name": "GitActionsCICD",
+  "ProjectType": "Process",
+  "Description": "GitActionsCICD",
+  "MainFile": "Main.xaml"
+}
