@@ -27,24 +27,15 @@ jobs:
       - name: Pack UiPath project
         shell: powershell
         run: |
-          uipcli package pack `
-            "${{ env.UIPATH_PROJECT_PATH }}" `
-            --output "${{ env.UIPATH_OUTPUT_PATH }}" `
-            --version "1.0.${{ github.run_number }}"
+          uipcli package pack "${{ env.UIPATH_PROJECT_PATH }}" --output "${{ env.UIPATH_OUTPUT_PATH }}" --version "1.0.${{ github.run_number }}"
+
+      - name: Find package
+        shell: powershell
+        run: |
+          Get-ChildItem "${{ env.UIPATH_OUTPUT_PATH }}" -Filter "*.nupkg"
 
       - name: Deploy package to Orchestrator
         shell: powershell
         run: |
           $package = Get-ChildItem "${{ env.UIPATH_OUTPUT_PATH }}" -Filter "*.nupkg" | Select-Object -First 1
-
-          uipcli package deploy `
-            $package.FullName `
-            "https://cloud.uipath.com/" `
-            "${{ vars.UIPATH_TENANT_NAME }}" `
-            -A "nimble_institute" `
-            -I "${{ secrets.UIPATH_CLIENT_ID }}" `
-            -S "${{ secrets.UIPATH_CLIENT_SECRET }}" `
-            --applicationScope "OR.Default" `
-            -o "${{ vars.UIPATH_FOLDER_NAME }}" `
-            --entryPointsPath "Main.xaml" `
-            --traceLevel "Information"
+          uipcli package deploy $package.FullName "https://cloud.uipath.com/" "Nimble_Institute" -A "nimble_institute" -I "${{ secrets.UIPATH_CLIENT_ID }}" -S "${{ secrets.UIPATH_CLIENT_SECRET }}" --applicationScope "OR.Default" -o "${{ secrets.UIPATH_FOLDER_NAME }}" --entryPointsPath "Main.xaml" --traceLevel "Information"
