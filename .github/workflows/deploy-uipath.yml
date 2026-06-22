@@ -1,0 +1,50 @@
+name: Deploy UiPath Project
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  UIPATH_PROJECT_PATH: "."
+  UIPATH_PACKAGE_NAME: "GitActionsCICD"
+  UIPATH_OUTPUT_PATH: "output"
+  UIPATH_ORCHESTRATOR_URL: ${{ vars.UIPATH_ORCHESTRATOR_URL }}
+  UIPATH_TENANT_NAME: ${{ vars.UIPATH_TENANT_NAME }}
+  UIPATH_FOLDER_NAME: ${{ vars.UIPATH_FOLDER_NAME }}
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install UiPath CLI
+        shell: powershell
+        run: |
+          dotnet tool install --global UiPath.CLI.Windows
+          uipcli --help
+
+      - name: Pack UiPath project
+        shell: powershell
+        run: |
+          uipcli package pack `
+            "${{ env.UIPATH_PROJECT_PATH }}" `
+            --output "${{ env.UIPATH_OUTPUT_PATH }}" `
+            --version "1.0.${{ github.run_number }}"
+
+      - name: Deploy package to Orchestrator
+        shell: powershell
+        run: |
+          $package = Get-ChildItem "${{ env.UIPATH_OUTPUT_PATH }}" -Filter "*.nupkg" | Select-Object -First 1
+
+          uipcli package deploy `
+            $package.FullName `
+            "${{ env.UIPATH_ORCHESTRATOR_URL }}" `
+            "${{ env.UIPATH_TENANT_NAME }}" `
+            --folder "${{ env.UIPATH_FOLDER_NAME }}" `
+            --clientId "${{ secrets.UIPATH_CLIENT_ID }}" `
+            --clientSecret "${{ secrets.UIPATH_CLIENT_SECRET }}"
