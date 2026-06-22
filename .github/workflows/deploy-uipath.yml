@@ -38,4 +38,4 @@ jobs:
         shell: powershell
         run: |
           $package = Get-ChildItem "${{ env.UIPATH_OUTPUT_PATH }}" -Filter "*.nupkg" | Select-Object -First 1
-          uipcli package deploy $package.FullName "https://cloud.uipath.com/" "Nimble_Institute" -A "nimble_institute" -I "${{ secrets.UIPATH_CLIENT_ID }}" -S "${{ secrets.UIPATH_CLIENT_SECRET }}" --applicationScope "OR.Default" -o "${{ secrets.UIPATH_FOLDER_NAME }}" --entryPointsPath "Main.xaml" --traceLevel "Information"
+          uipcli package deploy $package.FullName "https://cloud.uipath.com/" "Nimble_Institute" -A "nimble_institute" -I "${{ secrets.UIPATH_CLIENT_ID }}" -S "${{ secrets.UIPATH_CLIENT_SECRET }}" --applicationScope "OR.Assets OR.Execution OR.Folders OR.Jobs OR.Machines OR.Queues OR.Robots OR.Settings" -o "${{ secrets.UIPATH_FOLDER_NAME }}" --entryPointsPath "Main.xaml" --traceLevel "Information"
