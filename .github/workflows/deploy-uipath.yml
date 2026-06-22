@@ -8,11 +8,7 @@ on:
 
 env:
   UIPATH_PROJECT_PATH: "."
-  UIPATH_PACKAGE_NAME: "GitActionsCICD"
   UIPATH_OUTPUT_PATH: "output"
-  UIPATH_ORCHESTRATOR_URL: ${{ vars.UIPATH_ORCHESTRATOR_URL }}
-  UIPATH_TENANT_NAME: ${{ vars.UIPATH_TENANT_NAME }}
-  UIPATH_FOLDER_NAME: ${{ vars.UIPATH_FOLDER_NAME }}
 
 jobs:
   build-and-deploy:
@@ -43,8 +39,12 @@ jobs:
 
           uipcli package deploy `
             $package.FullName `
-            "${{ env.UIPATH_ORCHESTRATOR_URL }}" `
-            "${{ env.UIPATH_TENANT_NAME }}" `
-            --folder "${{ env.UIPATH_FOLDER_NAME }}" `
-            --clientId "${{ secrets.UIPATH_CLIENT_ID }}" `
-            --clientSecret "${{ secrets.UIPATH_CLIENT_SECRET }}"
+            "https://cloud.uipath.com/" `
+            "${{ vars.UIPATH_TENANT_NAME }}" `
+            -A "nimble_institute" `
+            -I "${{ secrets.UIPATH_CLIENT_ID }}" `
+            -S "${{ secrets.UIPATH_CLIENT_SECRET }}" `
+            --applicationScope "OR.Default" `
+            -o "${{ vars.UIPATH_FOLDER_NAME }}" `
+            --entryPointsPath "Main.xaml" `
+            --traceLevel "Information"
